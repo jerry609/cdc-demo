@@ -1,14 +1,15 @@
 package com.example.cdcdemo.listener;
 
-
-import com.example.cdcdemo.config.RabbitMQConfig;
 import com.example.cdcdemo.model.Customer;
 import com.example.cdcdemo.model.DataChangeEvent;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
+
+import java.util.Map;
 
 @Component
 @Slf4j
@@ -16,9 +17,10 @@ import org.springframework.stereotype.Component;
 public class DatabaseChangeListener {
 
     private final RedisTemplate<String, Object> redisTemplate;
+    private final ObjectMapper objectMapper;
     private static final String CACHE_KEY_CUSTOMER = "customer:";
 
-    @RabbitListener(queues = RabbitMQConfig.QUEUE_NAME)
+    @RabbitListener(queues = "cdc.queue")
     public void processDataChangeEvent(DataChangeEvent event) {
         log.info("Received data change event: {}", event);
 
@@ -46,7 +48,8 @@ public class DatabaseChangeListener {
     }
 
     private void handleCustomerCreated(DataChangeEvent event) {
-        Customer customer = (Customer) event.getData();
+        // 从 LinkedHashMap 转换为 Customer 对象
+        Customer customer = objectMapper.convertValue(event.getData(), Customer.class);
         log.info("Syncing created customer to other systems: {}", customer);
 
         // 这里可以添加同步到其他系统的逻辑
@@ -54,7 +57,8 @@ public class DatabaseChangeListener {
     }
 
     private void handleCustomerUpdated(DataChangeEvent event) {
-        Customer customer = (Customer) event.getData();
+        // 从 LinkedHashMap 转换为 Customer 对象
+        Customer customer = objectMapper.convertValue(event.getData(), Customer.class);
         log.info("Syncing updated customer to other systems: {}", customer);
 
         // 这里可以添加同步到其他系统的逻辑
@@ -62,7 +66,8 @@ public class DatabaseChangeListener {
     }
 
     private void handleCustomerDeleted(DataChangeEvent event) {
-        Customer customer = (Customer) event.getData();
+        // 从 LinkedHashMap 转换为 Customer 对象
+        Customer customer = objectMapper.convertValue(event.getData(), Customer.class);
         log.info("Syncing deleted customer to other systems: {}", customer);
 
         // 确保 Redis 缓存中的数据已删除
