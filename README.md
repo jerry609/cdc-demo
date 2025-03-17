@@ -10,27 +10,38 @@ cdcdemo/
 │   │   │   └── com/
 │   │   │       └── blackhorse/
 │   │   │           └── cdcdemo/
-│   │   │               ├── CdcDemoApplication.java                # 应用程序入口
+│   │   │               ├── CdcDemoApplication.java                # 应用程序入口（已更新支持异步）
 │   │   │               ├── config/
+│   │   │               │   ├── JacksonConfig.java                 # Jackson JSON 配置
+│   │   │               │   ├── MybatisPlusConfig.java             # MyBatis Plus 配置
 │   │   │               │   ├── RabbitMQConfig.java                # RabbitMQ 配置
 │   │   │               │   └── RedisConfig.java                   # Redis 配置
 │   │   │               ├── controller/
-│   │   │               │   └── CustomerController.java            # REST API 控制器
+│   │   │               │   ├── CustomerController.java            # 客户 REST API 控制器
+│   │   │               │   └── DataIntegrationController.java     # 数据集成 REST API 控制器
 │   │   │               ├── listener/
 │   │   │               │   └── DatabaseChangeListener.java        # 消息监听器
 │   │   │               ├── model/
 │   │   │               │   ├── Customer.java                      # 客户实体类
-│   │   │               │   └── DataChangeEvent.java               # 数据变更事件
+│   │   │               │   ├── DataChangeEvent.java               # 数据变更事件
+│   │   │               │   └── integration/                       # 数据集成模型目录
+│   │   │               │       ├── DataIntegrationRequest.java    # 数据集成请求模型
+│   │   │               │       ├── IntegrationStatus.java         # 集成状态模型
+│   │   │               │       └── IntegrationJob.java            # 集成作业模型
 │   │   │               ├── publisher/
 │   │   │               │   └── ChangeEventPublisher.java          # 事件发布服务
 │   │   │               ├── mapper/
-│   │   │               │   └── CustomerMapper.java                # MyBatis Plus Mapper
+│   │   │               │   ├── CustomerMapper.java                # 客户 MyBatis Plus Mapper
+│   │   │               │   └── IntegrationJobMapper.java          # 集成作业 Mapper
 │   │   │               └── service/
-│   │   │                   └── CustomerService.java               # 业务逻辑服务
+│   │   │                   ├── CustomerService.java               # 客户业务逻辑服务
+│   │   │                   └── DataIntegrationService.java        # 数据集成服务
 │   │   └── resources/
-│   │       ├── application.properties                             # 应用配置文件
-│   │       ├── application-dev.properties                         # 开发环境配置
-│   │       └── application-prod.properties                        # 生产环境配置
+│   │       ├── application.yml                                    # 应用配置文件
+│   │       ├── application-dev.yml                                # 开发环境配置
+│   │       ├── application-prod.yml                               # 生产环境配置
+│   │       └── sql/                                               # SQL 脚本目录
+│   │           └── integration_jobs.sql                           # 集成作业表创建脚本
 │   └── test/
 │       └── java/
 │           └── com/
@@ -38,7 +49,8 @@ cdcdemo/
 │                   └── cdcdemo/
 │                       ├── CdcDemoApplicationTests.java           # 应用测试类
 │                       └── service/
-│                           └── CustomerServiceTests.java          # 服务测试类
+│                           ├── CustomerServiceTests.java          # 客户服务测试类
+│                           └── DataIntegrationServiceTests.java   # 数据集成服务测试类
 └── pom.xml                                                        # Maven 配置文件
 ```
 
